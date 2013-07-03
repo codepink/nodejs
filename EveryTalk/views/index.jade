@@ -1,12 +1,18 @@
 doctype 5
 html
-  head
-    link(rel='stylesheet', href='/stylesheets/lib/bootstrap.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(type='text/javascript')(src='/socket.io/socket.io.js')
-    script(type='text/javascript')(src='javascripts/lib/jquery.js')
-    script(type='text/javascript')(src='javascripts/lib/underscore-min.js')
-    script(type='text/javascript')(src='javascripts/lib/backbone.js')
-    script(type='text/javascript')(src='javascripts/messenger.js')
-  body
-    Test
+	head
+		link(rel='stylesheet', href='/stylesheets/lib/bootstrap.css')
+		script(type='text/javascript')(src='/socket.io/socket.io.js')
+		script(type='text/javascript')(src='javascripts/lib/jquery.js')
+		script(type='text/javascript')(src='javascripts/lib/underscore-min.js')
+		script(type='text/javascript')(src='javascripts/lib/backbone.js')
+		script(type='text/javascript')(src='javascripts/messenger.js')
+	body
+
+	script#itemTemplate(type='text/template')
+		#top 
+			h3 <%= username %> 님아 입장
+		#contents
+		#bottom
+			input#inputMsg(type="text", placeholder="하고 싶은 말 입력하세요.")
+			button.btn 입력
