@@ -46,11 +46,8 @@ io.sockets.on('connection', function(socket){
 	 * 방 입장 
 	 */
 	socket.on('join', function(data){
-		//io.sockets.sockets[id].emit('smart', data);
-		//socket.broadcast.emit('smart', data);
 		
 		// id를 어케 비교함? 쿠키를 구워? 세션???????
-		
 		
 		// insert? 입장이 제대로 완료되었다는 프로세스가 완료되면 리턴
 		io.sockets.sockets[id].emit('create_room', data);
