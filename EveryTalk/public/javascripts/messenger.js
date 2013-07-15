@@ -5,10 +5,8 @@
 $(function(){
 	
 	// 1. 입장하기
-	//var socket = io.connect(); // 소켓 실행 - 서버 커넥션 함수 실행
-	
 	var username = prompt('입장하기 :', ''),
-		socket = io.connect();
+		socket = io.connect(); // on('connection') 실행
 	
 	
 	socket.emit('join', {
@@ -44,12 +42,17 @@ $(function(){
 			"keypress #inputMsg": "messeging" 
 		},
 		initialize: function(model){
+			var self = this;
 			
 			console.log("메신저 껍데기가 만들어져쐅요");
 			
 			this.model = model;
 			
 			this.template = _.template($("#itemTemplate").html());
+			
+			socket.on('push_message', function(data){
+				self.pushMessage(data.msg);
+			});
 			
 		},
 		render: function(){
@@ -59,16 +62,23 @@ $(function(){
 			return this;
 		},
 		messeging: function(e){
-			var code = (e.keyCode ? e.keyCode : e.which);
+			var code = (e.keyCode ? e.keyCode : e.which),
+				self = this;
 			
 			if(code == 13){ // enter keycode
-				
+				console.log(socket);
 				socket.emit('message', {
-					'username': $("#username").text(), // 원래 쿠키값으로 제어???? 모다???
-					'msg': $("#inputMsg").val(),
+					'username': self.$el.find("h3").html(), // 원래 쿠키값으로 제어???? 모다???
+					'msg': self.$el.find("#inputMsg").val(),
 					'date': new Date().toUTCString()
 				});
+				
+				this.$el.find("#inputMsg").val("");
 			}
+		},
+		pushMessage: function(msg){
+			
+			this.$el.find("#contents").append("<div>" + msg + "</div>");
 		}
 	});
 	

@@ -42,6 +42,8 @@ io.sockets.on('connection', function(socket){
 	
 	id = socket.id;
 	
+	//console.log(io.sockets.sockets);
+	
 	/**
 	 * 방 입장 
 	 */
@@ -50,13 +52,16 @@ io.sockets.on('connection', function(socket){
 		// id를 어케 비교함? 쿠키를 구워? 세션???????
 		
 		// insert? 입장이 제대로 완료되었다는 프로세스가 완료되면 리턴
+		io.sockets.sockets[id].set('name', 'test');
+		
+		console.log(io.sockets.sockets[id].get('name'));
 		io.sockets.sockets[id].emit('create_room', data);
 	});
 	
 	/**
 	 * 메세징 
 	 */
-	socket.on('messege', function(data){
-		console.log(data.username);
+	socket.on('message', function(data){
+		io.sockets.emit('push_message', data);
 	});
 });
