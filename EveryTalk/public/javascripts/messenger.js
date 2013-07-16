@@ -6,8 +6,8 @@ $(function(){
 	
 	// 1. 입장하기
 	var username = prompt('입장하기 :', ''),
-		socket = io.connect(); // on('connection') 실행
-	
+		socket = io.connect(), // on('connection') 실행
+		view;
 	
 	socket.emit('join', {
 		'username': username
@@ -19,12 +19,24 @@ $(function(){
 		
 		// 사람 모델 만들고 메신저 껍데기(방)에 넣는다
 		
+		
+		///// 여기가 컨트롤러임
 		var person = new Person({
 			username: data.username
 		});
 		
-		$("body").html(new Messenger(person).render().el);
+		view = new Messenger(person);
 		
+		$("body").html(view.render().el);
+		
+	});
+	
+	socket.on('chat', function(data){
+		view.addChat(data);
+	});
+	
+	socket.on('add_state', function(data){
+		view.addChat(data);
 	});
 	
 	/**
@@ -48,11 +60,8 @@ $(function(){
 			
 			this.model = model;
 			
-			this.template = _.template($("#itemTemplate").html());
-			
-			socket.on('push_message', function(data){
-				self.pushMessage(data.msg);
-			});
+			this.template = _.template($("#layoutTemplate").html());
+			this.msgTemplate = _.template($("#chatItemTemplate").html());
 			
 		},
 		render: function(){
@@ -66,9 +75,9 @@ $(function(){
 				self = this;
 			
 			if(code == 13){ // enter keycode
-				console.log(socket);
+				
 				socket.emit('message', {
-					'username': self.$el.find("h3").html(), // 원래 쿠키값으로 제어???? 모다???
+					'username': self.model.get("username"),
 					'msg': self.$el.find("#inputMsg").val(),
 					'date': new Date().toUTCString()
 				});
@@ -76,16 +85,21 @@ $(function(){
 				this.$el.find("#inputMsg").val("");
 			}
 		},
-		pushMessage: function(msg){
+		addChat: function(data){
 			
-			this.$el.find("#contents").append("<div>" + msg + "</div>");
+			var opt = {
+				"username": data.username,
+				"msg": data.msg	
+			};
+			
+			opt["type"] = (data.username == this.model.get("username")) ? "me" : "other";
+			
+			this.$el.find("#contents").append(this.msgTemplate(opt));
+			
+		},
+		addState: function(data){
+			
 		}
 	});
-	
-	
-	/// 방 입장 > 서버 먼저 호출 > 제대로 저장되면.. 뷰 그리고 시작
-	
-	/// 컨텐츠 뷰를 일단 만든다.
-	
 	
 });

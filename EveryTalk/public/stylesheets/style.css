@@ -1,8 +1,4 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+#inputMsg{margin-bottom:0}
 
-a {
-  color: #00B7FF;
-}
+.msg{margin:10px;padding:10px;border-radius:10px;border:3px solid #56CAF4;background-color:#ddd}
+.msg.other{border:none}

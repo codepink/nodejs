@@ -35,33 +35,69 @@ server.listen(app.get('port'), function(){
 });
 
 
-var id = 0;
+var allSockets = {
+
+	// A storage object to hold the sockets
+	sockets: {},
+
+	// Adds a socket to the storage object so it can be located by name
+	addSocket: function(socket, name) {
+		this.sockets[name] = socket;
+	},
+
+	// Removes a socket from the storage object based on its name
+	removeSocket: function(name) {
+		
+		console.log(this.sockets);
+		
+		// if (this.sockets[name] !== undefined) {
+			// this.sockets[name] = null;
+			// delete this.sockets[name];
+		// }
+	},
+
+	// Returns a socket from the storage object based on its name
+	// Throws an exception if the name is not valid
+	getSocketByName: function(name) {
+		if (this.sockets[name] !== undefined) {
+			return this.sockets[name];
+		} else {
+			throw new Error("A socket with the name '"+name+"' does not exist");
+		}
+	}
+};
+
 
 // 소켓 이벤트 연결
 io.sockets.on('connection', function(socket){
-	
-	id = socket.id;
-	
-	//console.log(io.sockets.sockets);
 	
 	/**
 	 * 방 입장 
 	 */
 	socket.on('join', function(data){
 		
-		// id를 어케 비교함? 쿠키를 구워? 세션???????
+		allSockets.addSocket(socket, data.username);
 		
-		// insert? 입장이 제대로 완료되었다는 프로세스가 완료되면 리턴
-		io.sockets.sockets[id].set('name', 'test');
-		
-		console.log(io.sockets.sockets[id].get('name'));
-		io.sockets.sockets[id].emit('create_room', data);
+		allSockets.getSocketByName(data.username).emit('create_room', data);
 	});
 	
 	/**
 	 * 메세징 
 	 */
 	socket.on('message', function(data){
-		io.sockets.emit('push_message', data);
+		
+		io.sockets.emit('chat', data);
+	
+	});
+	
+	/**
+	 * 방 나감 
+	 */
+	socket.on('disconnect', function(data){
+		console.log("/////////////////////////////////");
+		console.log(socket.id);
+		allSockets.removeSocket(socket.id);
+		
+		io.sockets.emit('add_state');
 	});
 });

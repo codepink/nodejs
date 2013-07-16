@@ -2,6 +2,7 @@ doctype 5
 html
 	head
 		link(rel='stylesheet', href='/stylesheets/lib/bootstrap.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(type='text/javascript')(src='/socket.io/socket.io.js')
 		script(type='text/javascript')(src='javascripts/lib/jquery.js')
 		script(type='text/javascript')(src='javascripts/lib/underscore-min.js')
@@ -9,10 +10,16 @@ html
 		script(type='text/javascript')(src='javascripts/messenger.js')
 	body
 
-	script#itemTemplate(type='text/template')
+	script#layoutTemplate(type='text/template')
 		#top 
-			h3 <%= username %> 님아 입장
+			h3
+				span#username <%= username %>
+				님아 입장
 		#contents
 		#bottom
 			input#inputMsg(type="text", placeholder="하고 싶은 말 입력하세요.")
 			button.btn 입력테슷이상해
+
+	script#chatItemTemplate(type='text/template')
+		<% if(type == 'me') %><div class="msg"><%= username %> - <%= msg %></div>
+		<% else if(type == 'other') %><div class="msg other"><%= username %> - <%= msg %></div>
