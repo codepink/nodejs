@@ -43,6 +43,9 @@ var allSockets = {
 	// Adds a socket to the storage object so it can be located by name
 	addSocket: function(socket, name) {
 		this.sockets[name] = socket;
+		
+		console.log("==========================");
+		console.log(this.sockets);
 	},
 
 	// Removes a socket from the storage object based on its name
@@ -62,7 +65,7 @@ var allSockets = {
 		if (this.sockets[name] !== undefined) {
 			return this.sockets[name];
 		} else {
-			throw new Error("A socket with the name '"+name+"' does not exist");
+			throw new Error("A socket with the name '"+ name +"' does not exist");
 		}
 	}
 };
@@ -79,6 +82,7 @@ io.sockets.on('connection', function(socket){
 		allSockets.addSocket(socket, data.username);
 		
 		allSockets.getSocketByName(data.username).emit('create_room', data);
+		
 	});
 	
 	/**
@@ -96,6 +100,8 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect', function(data){
 		console.log("/////////////////////////////////");
 		console.log(socket.id);
+		console.log("====================");
+		console.log(socket);
 		allSockets.removeSocket(socket.id);
 		
 		io.sockets.emit('add_state');
